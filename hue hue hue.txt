@@ -1,0 +1,52 @@
+from numpy.ma.core import correlate
+from google.colab import files 
+dataToUpload = files.upload()
+
+import pandas as pd
+import statistics
+import plotly.graph_objects as go 
+import plotly.figure_factory as ff
+import plotly.express as px
+import random 
+import numpy as umom
+import csv 
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+
+df = pd.read_csv("escape_velocity.csv")
+Vel = df["Velocity"].tolist()
+Esk = df["Escaped"].tolist()
+
+fig = px.scatter(x = Vel, y = Esk)
+fig.show()
+
+from sklearn.linear_model import LogisticRegression
+
+X=umom.reshape(Vel,(len(Vel),1))
+Y=umom.reshape(Esk,(len(Esk),1))
+lr = LogisticRegression()
+lr.fit(X,Y)
+plt.figure()
+plt.scatter(X.ravel(),Y,color="red",zorder = 20)
+def sigmoidModel(x):
+  return 1 / (1 + umom.exp(-x))
+X_test = umom.linspace(0,100,200)
+chances = sigmoidModel(X_test*lr.coef_+lr.intercept_).ravel()
+
+plt.plot(X_test, chances, color ="black",linewidth = 3)
+plt.axhline(y=0, color = "k",linestyle = "-")
+plt.axhline(y=1, color = "k",linestyle = "-")
+plt.axhline(y=0.5, color = "b",linestyle = "--")
+
+#testing by hit and trial values
+
+plt.axvline(x = X_test[23],color = "b", linestyle = "--")
+plt.ylabel("y")
+plt.xlabel("x")
+plt.xlim(0,30)
+plt.show()
+
+
+
+
